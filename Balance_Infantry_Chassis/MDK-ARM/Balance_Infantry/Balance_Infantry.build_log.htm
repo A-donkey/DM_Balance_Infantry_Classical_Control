@@ -1,0 +1,186 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.40.0.12
+Copyright (C) 2024 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: xinyang lv, hust, LIC=KIVNB-2FM0V-796G1-CB6XM-JDCA9-2WKG5
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Professional  Version: 5.40.0.5
+Toolchain Path:  D:\keil\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.40.0.5
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      Segger\JL2CM3.dll V2.99.15.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+D:\RM\DM_H7_Test\DM_MC02\Balance_Infantry_Chassis\MDK-ARM\Balance_Infantry.uvprojx
+Project File Date:  09/25/2026
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil\ARM\ARMCC\Bin'
+Build target 'Balance_Infantry'
+compiling Chassis_Task.c...
+../APP/Inc/VT03.h(13): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct
+../Judge/Inc/protocol.h(78): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct
+../Judge/Inc/protocol.h(86): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct
+../Judge/Inc/Referee.h(159): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0001 比赛状态数据
+../Judge/Inc/Referee.h(167): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0002 比赛结果数据
+../Judge/Inc/Referee.h(172): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //0x0003 机器人血量数据
+../Judge/Inc/Referee.h(185): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0101 场地事件数据
+../Judge/Inc/Referee.h(190): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0104 裁判警告信息
+../Judge/Inc/Referee.h(197): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0105 飞镖发射相关数据
+../Judge/Inc/Referee.h(204): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0201 机器人性能体系
+../Judge/Inc/Referee.h(218): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0202 实时底盘功率和枪口热量
+../Judge/Inc/Referee.h(228): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0203 机器人位置
+../Judge/Inc/Referee.h(235): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0204 机器人增益
+../Judge/Inc/Referee.h(245): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0206 伤害状态
+../Judge/Inc/Referee.h(251): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0207 实时射击信息
+../Judge/Inc/Referee.h(259): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0208 子弹剩余发射数
+../Judge/Inc/Referee.h(267): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0209 机器人RFID状态
+../Judge/Inc/Referee.h(273): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x020A 飞镖机器人客户端指令数据
+../Judge/Inc/Referee.h(281): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x020B 地面机器人位置数据
+../Judge/Inc/Referee.h(295): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x20C 雷达标记进度
+../Judge/Inc/Referee.h(300): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //0x20D 哨兵自主决策信息同步
+../Judge/Inc/Referee.h(306): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //0x20E 雷达自主决策信息同步
+../Judge/Inc/Referee.h(312): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0301 机器人间通信 头结构体
+../Judge/Inc/Referee.h(320): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0302 自定义控制器与机器人交互数据
+../Judge/Inc/Referee.h(325): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0303 选手端小地图交互数据
+../Judge/Inc/Referee.h(334): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //0x0304 键鼠遥控数据
+../Judge/Inc/Referee.h(345): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0305 选手端小地图接收雷达数据
+../Judge/Inc/Referee.h(361): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0306 自定义控制器与选手端交互数据
+../Judge/Inc/Referee.h(371): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x0307 选手端小地图接收哨兵数据
+../Judge/Inc/Referee.h(381): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x308 选手端小地图接收机器人数据
+../Judge/Inc/Referee.h(388): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //0x309 自定义控制器接受机器人数据
+../Judge/Inc/Referee.h(394): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //绘制UI UI图形数据
+../Judge/Inc/Referee.h(411): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //绘制UI UI字符串数据
+../Judge/Inc/Referee.h(427): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //绘制UI UI删除图形数据
+../Judge/Inc/Referee.h(433): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //绘制UI 绘制1个图形完整结构体
+../Judge/Inc/Referee.h(442): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //绘制UI 绘制2个图形完整结构体
+../Judge/Inc/Referee.h(451): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //绘制UI 绘制5个图形完整结构体
+../Judge/Inc/Referee.h(460): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //绘制UI 绘制7个图形完整结构体
+../Judge/Inc/Referee.h(469): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct //绘制UI 绘制1字符串完整结构体
+../Judge/Inc/Referee.h(478): warning:  #3108-D: attribute "__packed__" does not apply here
+  typedef __packed struct  //绘制UI UI删除图形完整结构体
+..\Task\Src\Chassis_Task.c: 40 warnings, 0 errors
+linking...
+Program Size: Code=86868 RO-data=4264 RW-data=2980 ZI-data=67860  
+FromELF: creating hex file...
+"Balance_Infantry\Balance_Infantry.axf" - 0 Error(s), 40 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                https://www.keil.com/pack/ARM.CMSIS.6.1.0.pack
+                ARM::CMSIS@6.1.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 6.1.0
+
+Package Vendor: ARM
+                https://www.keil.com/pack/ARM.CMSIS-DSP.1.16.2.pack
+                ARM::CMSIS-DSP@1.16.2
+                CMSIS Embedded Compute Library
+   * Component: DSP Variant: Source Version: 1.16.2
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32H7xx_DFP.4.1.3.pack
+                Keil::STM32H7xx_DFP@4.1.3
+                STMicroelectronics STM32H7 Series Device Support
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_Balance_Infantry
+  C:/Users/13805/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.16.2/Include
+  C:/Users/13805/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.16.2/PrivateInclude
+  C:/Users/13805/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE@6.1.0
+      Include file:  CMSIS/Core/Include/tz_context.h
+
+   * Component: ARM::CMSIS:DSP&Source@1.16.2
+      Source file:   Source/CommonTables/CommonTables.c
+      Include file:  Include/arm_common_tables.h
+      Source file:   Source/ComplexMathFunctions/ComplexMathFunctions.c
+      Source file:   Source/ControllerFunctions/ControllerFunctions.c
+      Source file:   Source/DistanceFunctions/DistanceFunctions.c
+      Include file:  Include/arm_common_tables_f16.h
+      Include file:  Include/arm_math_f16.h
+      Include file:  Include/arm_const_structs_f16.h
+      Include file:  Include/arm_math.h
+      Source file:   Source/BasicMathFunctions/BasicMathFunctions.c
+      Include file:  Include/arm_const_structs.h
+      Source file:   Source/QuaternionMathFunctions/QuaternionMathFunctions.c
+      Source file:   Source/BayesFunctions/BayesFunctions.c
+      Source file:   Source/SupportFunctions/SupportFunctionsF16.c
+      Source file:   Source/TransformFunctions/TransformFunctions.c
+      Source file:   Source/BasicMathFunctions/BasicMathFunctionsF16.c
+      Source file:   Source/FilteringFunctions/FilteringFunctionsF16.c
+      Source file:   Source/StatisticsFunctions/StatisticsFunctions.c
+      Source file:   Source/MatrixFunctions/MatrixFunctions.c
+      Source file:   Source/CommonTables/CommonTablesF16.c
+      Source file:   Source/BayesFunctions/BayesFunctionsF16.c
+      Source file:   Source/StatisticsFunctions/StatisticsFunctionsF16.c
+      Source file:   Source/TransformFunctions/TransformFunctionsF16.c
+      Source file:   Source/SVMFunctions/SVMFunctions.c
+      Source file:   Source/FilteringFunctions/FilteringFunctions.c
+      Source file:   Source/WindowFunctions/WindowFunctions.c
+      Source file:   Source/ComplexMathFunctions/ComplexMathFunctionsF16.c
+      Source file:   Source/MatrixFunctions/MatrixFunctionsF16.c
+      Source file:   Source/DistanceFunctions/DistanceFunctionsF16.c
+      Source file:   Source/FastMathFunctions/FastMathFunctionsF16.c
+      Source file:   Source/InterpolationFunctions/InterpolationFunctions.c
+      Source file:   Source/SVMFunctions/SVMFunctionsF16.c
+      Source file:   Source/SupportFunctions/SupportFunctions.c
+      Source file:   Source/FastMathFunctions/FastMathFunctions.c
+      Source file:   Source/InterpolationFunctions/InterpolationFunctionsF16.c
+Build Time Elapsed:  00:00:05
+</pre>
+</body>
+</html>
