@@ -31,13 +31,19 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 		switch(FDCAN1_RxHeader.Identifier)
 		{
 			// DT7Ò£¿Ø
-			case DT7_TO_CHASSIS_CAN_ID:
+			case DT7_TO_CHASSIS_CAN_ID_1:
 			{
 				Rc_Ctrl.rc.ch[1]  = (Rx_Data1[0] << 8 | Rx_Data1[1]);
 				Rc_Ctrl.rc.ch[4]  = (Rx_Data1[2] << 8 | Rx_Data1[3]);
 				Rc_Ctrl.key.v     = (Rx_Data1[4] << 8 | Rx_Data1[5]);
 				Rc_Ctrl.rc.s[0]   =  Rx_Data1[6];
 				Rc_Ctrl.rc.s[1]   =  Rx_Data1[7];
+				break;
+			}
+			// DT7Ò£¿Ø
+			case DT7_TO_CHASSIS_CAN_ID_2:
+			{
+				Rc_Ctrl.rc.ch[0]  = (Rx_Data1[0] << 8 | Rx_Data1[1]);
 				break;
 			}
 			// ÉÏ°åÐÅÏ¢1

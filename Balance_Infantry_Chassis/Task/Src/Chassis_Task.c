@@ -77,6 +77,7 @@ void Chassis_Task(void)
 	Check_Stuck_Leg(&Flag,&Bring_Legs,&Controlled_State,leg_ptr,joint_m_ptr);
 	YAW_Parameter_Processing(&Flag,&Goal_Setting,&Controlled_State,&Body);
 	Bump_Control(&Flag,&Goal_Setting,leg_ptr,joint_m_ptr);
+	Jump_Control(&Flag,&Goal_Setting,&Body,leg_ptr,joint_m_ptr,five_link_ptr);
 	Leg_Control(&INS,&Flag,&Bring_Legs,&Goal_Setting,&Self_Rescue,&Controlled_State,leg_ptr,joint_m_ptr,five_link_ptr);
 	LQR(&Flag,&Goal_Setting,&Controlled_State,&Compensation_Amount,&Body,leg_ptr,joint_m_ptr,five_link_ptr);
 	Power_Control(&Flag,&Controlled_State,joint_m_ptr,&Body);
@@ -210,6 +211,11 @@ void All_Theta_Err_Check(INS_t *ins,
 	{
 		if(leg[0]->abs_leg_theta<=LEG_THETA_HEAD_MAX||leg[0]->abs_leg_theta>=BUMP_LEG_THETA_BACK_MAX||
 			 leg[1]->abs_leg_theta<=LEG_THETA_HEAD_MAX||leg[1]->abs_leg_theta>=BUMP_LEG_THETA_BACK_MAX|| 
+			 fabs(ins->Pitch) >= 90) flag->fall_flag = 1;
+	}
+	else if(flag->jump_flag){
+		if(leg[0]->abs_leg_theta<=LEG_THETA_HEAD_MAX||leg[0]->abs_leg_theta>=JUMP_LEG_THETA_BACK_MAX||
+			 leg[1]->abs_leg_theta<=LEG_THETA_HEAD_MAX||leg[1]->abs_leg_theta>=JUMP_LEG_THETA_BACK_MAX|| 
 			 fabs(ins->Pitch) >= 90) flag->fall_flag = 1;
 	}
 	else
@@ -355,6 +361,8 @@ void Rc_Mode(Flag_Bit_t *flag,
 						 Goal_Setting_t *goal)
 {
 	static bool first_bump_flag = 0;
+	static bool first_jump_flag = 0;
+	static uint16_t jump_cool_cnt = 0;//跳跃冷却时间
 
 	if     (switch_is_down(rc_ctrl->rc.s[1])) { goal->Target_L0 = Ramp_Function(DOWN_LEG_LENGTH,&goal->Target_L0,LEG_RAMP_SENS); } //腿长控制
 	else if(switch_is_mid (rc_ctrl->rc.s[1])) { goal->Target_L0 = Ramp_Function(MID_LEG_LENGTH,&goal->Target_L0,LEG_RAMP_SENS);  }						
@@ -368,6 +376,24 @@ void Rc_Mode(Flag_Bit_t *flag,
 	{
 		flag->bump_flag = 0; //复位
 		first_bump_flag = 0; 
+	}
+	
+	if(jump_cool_cnt>0){
+		jump_cool_cnt--;
+	}
+	
+	if(abs(rc_ctrl->rc.ch[0]) == 660 && first_jump_flag == 0){
+		flag->jump_flag = 1;//进入跳跃状态机
+		flag->jump_ready_flag = 0;//预备起跳标志位清零
+		
+		first_jump_flag = 1;
+		jump_cool_cnt = 3000;
+	}
+	else if(abs(rc_ctrl->rc.ch[0]) != 660 && jump_cool_cnt == 0){
+		flag->jump_flag = 0;
+		flag->jump_ready_flag = 0;
+		
+		first_jump_flag = 0;
 	}
 	
 //	flag->bump_flag = 0; //复位
@@ -1101,6 +1127,111 @@ void Bump_Control(Flag_Bit_t *flag,
 	}
 }
 
+void Jump_Control(Flag_Bit_t *flag,
+									Goal_Setting_t *goal,
+									Body_Current_Situation_t *body,
+									Leg_Current_Situation_t *leg[2],
+									Joint_Motor_Status_t *joint_m[2],
+								  Vmc_Five_Link_Parameter_t *five_link[2])
+{
+	static int jump_step[6] = {0,0,0,0,0,0};//{初始化,压腿蓄能,跳跃,空中收腿,落地缓冲,返回}
+	static bool lock_yaw_flag = 0; //锁定YAW标志位
+	static uint16_t zip_cnt = 0;//压腿计数器(超时退出)
+	static uint16_t stay_in_air_cnt = 0;//空中收腿计数器(保持收腿跨越地形)
+	static uint16_t offland_cnt = 0;//触地计数器
+	if(flag->jump_flag)
+	{
+		if(!lock_yaw_flag)
+		{
+			lock_yaw_flag = 1;
+			goal->yaw_t = body->abs_yaw;//锁定YAW
+			jump_step[0] = 1;//完成初始化
+		}
+		else
+		{
+			if(jump_step[0] == 1 && jump_step[1] == 0)
+			{
+				goal->Target_L0 = ZIP_LEG_LENGTH; //压腿蓄能
+				zip_cnt++;
+				if(five_link[0]->L0 <= ZIP_LEG_LENGTH + 0.01f && five_link[1]->L0 <= ZIP_LEG_LENGTH + 0.01f)
+				{
+					jump_step[1] = 1; //完成压腿蓄能
+					flag->jump_ready_flag = 1; //跳跃准备完成
+					zip_cnt = 0;//计数器清零
+				}
+				else if(zip_cnt >= 300)
+				{
+					//超时强制退出
+					flag->jump_flag = 0;
+					flag->jump_ready_flag = 0;
+					zip_cnt = 0;//计数器清零
+				}
+			}
+			else if(jump_step[1] == 1 && jump_step[2] == 0)
+			{
+				if(flag->jump_ready_flag == 1)
+				{
+					//下发开环力矩,见VMC函数
+					if(five_link[0]->L0 >= UP_LEG_LENGTH - 0.02f && five_link[1]->L0 >= UP_LEG_LENGTH - 0.02f){
+						jump_step[2] = 1; //完成跳跃
+						flag->jump_ready_flag = 0; //跳跃预备标志位清零
+					}
+					
+				}
+			}
+			else if(jump_step[2] == 1 && jump_step[3] == 0)
+			{
+				//空中收腿
+				if(flag->jump_ready_flag == 0)
+				{
+					goal->Target_L0 = ZIP_LEG_LENGTH; //空中收腿
+					flag->jump_stay_flag = 1;//腾空标志位挂起
+					flag->jump_zip_flag = 1;//后摆腿标志位挂起
+					if(five_link[0]->L0 <= ZIP_LEG_LENGTH + 0.01f && five_link[1]->L0 <= ZIP_LEG_LENGTH + 0.01f)
+					{
+						stay_in_air_cnt++;
+						if(stay_in_air_cnt >= 100)
+						{
+							jump_step[3] = 1; //完成空中收腿
+							stay_in_air_cnt = 0;//计数器清零
+							flag->jump_zip_flag = 0;
+						}
+					}
+				}
+			}
+			else if(jump_step[3] == 1 && jump_step[4] == 0)
+			{
+				//落地缓冲
+				goal->Target_L0 = UP_LEG_LENGTH; //落地缓冲
+				offland_cnt++;
+				if(offland_cnt >= 100 || flag->off_flag!=1)
+				{
+					jump_step[4] = 1; //完成落地缓冲
+					flag->jump_stay_flag = 0;
+					offland_cnt = 0;//计数器清零
+				}
+			}
+			else if(jump_step[4] == 1 && jump_step[5] == 0)
+			{
+				//返回
+				flag->jump_flag = 0; //跳跃结束
+				jump_step[5] = 1; //完成返回
+			}
+		}
+	}
+	else
+	{
+		for(int i=0;i<6;i++)
+		{
+			jump_step[i] = 0;
+		}
+		lock_yaw_flag = 0;
+		flag->jump_ready_flag = 0;
+		flag->jump_stay_flag = 0;
+		flag->jump_zip_flag = 0;
+	}
+
+}
 /*******************************************************************************************************
 腿部控制
 ********************************************************************************************************/
@@ -1113,7 +1244,7 @@ void Leg_Control(INS_t *ins,
 								 Leg_Current_Situation_t *leg[2],
 								 Joint_Motor_Status_t *joint_m[2],
 								 Vmc_Five_Link_Parameter_t *five_link[2])
-{			
+{	
 	//车体重力方向补偿
 	Feedforward_Calculate(&G_Comp[0],leg[0]->Fn - Leg[0].fl);		
 	Feedforward_Calculate(&G_Comp[1],leg[1]->Fn - Leg[1].fl);		
@@ -1146,8 +1277,16 @@ void Leg_Control(INS_t *ins,
 			}
 			else //离地
 			{
-				joint_m[0]->F0 = -Leg_L_Pid[0].Output - off_the_ground.fn_comp;
-				joint_m[1]->F0 = -Leg_L_Pid[1].Output - off_the_ground.fn_comp;	
+					if(flag->jump_stay_flag || flag->jump_ready_flag)//跳跃腾空,补气弹簧前馈
+					{
+						joint_m[0]->F0 = -Leg_L_Pid[0].Output + JUMP_AIR_RETRACT_FF;
+						joint_m[1]->F0 = -Leg_L_Pid[1].Output + JUMP_AIR_RETRACT_FF;
+					}
+					else//普通离地(下台阶/飞坡)
+					{
+						joint_m[0]->F0 = -Leg_L_Pid[0].Output - off_the_ground.fn_comp;
+						joint_m[1]->F0 = -Leg_L_Pid[1].Output - off_the_ground.fn_comp;
+					}
 			}
 		}
 		else //车体翻倒
@@ -1311,7 +1450,7 @@ void Vmc(Flag_Bit_t *flag,
 	if(flag->theta_flag[1]) joint_m[1]->A = joint_m[1]->A*0.6f;
 	
 	//离地时关闭轮毅输出
-	if(flag->off_flag)
+	if(flag->off_flag || flag->jump_stay_flag)
 	{
 		joint_m[0]->A = 0;
 		joint_m[1]->A = 0;
@@ -1323,6 +1462,16 @@ void Vmc(Flag_Bit_t *flag,
 		joint_m[0]->A = 0;
 		joint_m[1]->A = 0;
 	}
+
+	if(flag->jump_ready_flag == 1) //跳跃时下发开环力矩
+	{
+		//后续可根据地形高度调节开环力矩大小
+		joint_m[0]->T_A = 39;
+		joint_m[0]->T_E = -39;
+		joint_m[1]->T_A = 39;
+		joint_m[1]->T_E = -39;
+	}
+	
 }
 
 /*******************************************************************************************************

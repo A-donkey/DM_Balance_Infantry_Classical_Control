@@ -2343,16 +2343,6 @@
               <FileType>5</FileType>
               <FilePath>..\APP\Inc\GimbalSystemIDConfig.h</FilePath>
             </File>
-            <File>
-              <FileName>System_Identification.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\Src\System_Identification.c</FilePath>
-            </File>
-            <File>
-              <FileName>System_Identification.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\APP\Inc\System_Identification.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

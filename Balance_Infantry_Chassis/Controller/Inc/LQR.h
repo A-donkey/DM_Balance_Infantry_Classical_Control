@@ -8,6 +8,7 @@
 #include "Chassis_Task.h"
 #include "Some_Functions.h"
 #include "Power_Limit.h"
+#include "Parameter.h"
 
 #define X_MAX       6.00f
 //#define Yaw_MAX     1.25f

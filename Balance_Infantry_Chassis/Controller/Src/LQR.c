@@ -70,6 +70,12 @@ void Offset_Calc(Flag_Bit_t *flag,Compensation_Amount_t *comp,float (*Fit_Coeffi
  float theta_offset = -0.5492*TL	+	0.2731;
  comp->Gravity_Comp_Theta_l = 	theta_offset;
  comp->Gravity_Comp_Theta_r = 	theta_offset;
+	
+ if(flag->jump_zip_flag){
+	comp->Gravity_Comp_Theta_l = 	JUMP_OFFSET_THETA;
+	comp->Gravity_Comp_Theta_r = 	JUMP_OFFSET_THETA;
+ }
+	
  //theta_b定义正方向与开源不同
  if(flag->spinning_flag){
 	comp->Spin_Comp_Theta_b = 0;
@@ -138,11 +144,12 @@ void LQR_Calc(Flag_Bit_t *flag,
 	}
 
 	//先调腿部摆角，再调机体PITCH，再调位移速度，最后调YAW
-		if(!flag->off_flag) 
+		if(!flag->off_flag || !flag->jump_stay_flag) 
 		{
 			if(!flag->spinning_flag) 
 			{
-					//关节电机极性
+				if(!flag->jump_ready_flag){
+				//关节电机极性
 				T[0] = 
 				-u[0]*Fitting_K[0][0]-u[1]*Fitting_K[0][1]
 				+u[2]*Fitting_K[0][2]-u[3]*Fitting_K[0][3]
@@ -172,6 +179,38 @@ void LQR_Calc(Flag_Bit_t *flag,
 				+u[6]*Fitting_K[3][6]+u[7]*Fitting_K[3][7]
 				+u[8]*Fitting_K[3][8]+u[9]*Fitting_K[3][9];
 				
+				}
+				else{
+						//关节电机极性
+				T[0] = 
+				-0									 -0
+				+u[2]*Fitting_K[0][2]-u[3]*Fitting_K[0][3]
+				-u[4]*Fitting_K[0][4]-u[5]*Fitting_K[0][5]
+				-u[6]*Fitting_K[0][6]-u[7]*Fitting_K[0][7]
+				-u[8]*Fitting_K[0][8]-u[9]*Fitting_K[0][9];
+
+				T[1] = 
+				-0									 -0
+				+u[2]*Fitting_K[1][2]-u[3]*Fitting_K[1][3]
+				-u[4]*Fitting_K[1][4]-u[5]*Fitting_K[1][5]
+				-u[6]*Fitting_K[1][6]-u[7]*Fitting_K[1][7]
+				-u[8]*Fitting_K[1][8]-u[9]*Fitting_K[1][9];
+				
+					//轮电机极性
+				T[2] = 
+				-0									 -0
+				-u[2]*Fitting_K[2][2]+u[3]*Fitting_K[2][3]
+				+u[4]*Fitting_K[2][4]+u[5]*Fitting_K[2][5]
+				+u[6]*Fitting_K[2][6]+u[7]*Fitting_K[2][7]
+				+u[8]*Fitting_K[2][8]+u[9]*Fitting_K[2][9];
+					
+				T[3] = 
+				-0									 -0
+				-u[2]*Fitting_K[3][2]+u[3]*Fitting_K[3][3]
+				+u[4]*Fitting_K[3][4]+u[5]*Fitting_K[3][5]
+				+u[6]*Fitting_K[3][6]+u[7]*Fitting_K[3][7]
+				+u[8]*Fitting_K[3][8]+u[9]*Fitting_K[3][9];
+				}
 			}
 			else //小陀螺取消X位移,YAW位置增益
 			{

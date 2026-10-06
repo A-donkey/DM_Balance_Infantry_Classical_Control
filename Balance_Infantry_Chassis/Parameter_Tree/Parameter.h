@@ -32,6 +32,7 @@
 #define UP_LEG_LENGTH   0.34f    //高腿杆腿长(m)
 #define MID_LEG_LENGTH  0.27f    //中腿杆腿长
 #define DOWN_LEG_LENGTH 0.22f    //低腿杆腿长
+#define ZIP_LEG_LENGTH  0.19f    //跳跃压腿蓄能阶段腿长
 
 #define PC_DX_RAMP_SENS    0.018f   //键鼠DX阶跃灵敏度
 #define RC_DX_RAMP_SENS    0.020f   //遥控器DX阶跃灵敏度
@@ -44,6 +45,8 @@
 //暂时修改离地检测参数<*_*>
 //#define OFF_GROUND_FN_MAX    135.0f  //地面对车体最大支持力(离地判断阈值)
 #define OFF_GROUND_FN_COMP    40.0f  //离地后向下补偿的推力
+#define JUMP_AIR_RETRACT_FF   250.0f //跳跃腾空收腿恒定补偿力
+#define JUMP_OFFSET_THETA			0.5f	 //跳跃时的腿部摆角偏置
 
 //倒地自救参数
 
@@ -56,6 +59,7 @@
 
 #define LEG_THETA_HEAD_MAX      -1.1f //腿杆向前的最大摆角
 #define LEG_THETA_BACK_MAX       1.1f //腿杆向后的最大摆角
+#define JUMP_LEG_THETA_BACK_MAX	 1.5f //跳跃时向后最大摆角
 #define BUMP_LEG_THETA_BACK_MAX  2.4f //磕台阶模式下腿杆向后的最大摆角
 
 //判断磕台阶的各项参数
@@ -81,7 +85,7 @@
 #define BST_THRESHOLD        2       //卡腿判断时间阈值
 #define BRING_TWHEEL_MAX     5.2f    //触发卡腿判断的最大轮力矩值
 #define BRING_LEG_THETA_MAX  0.5f    //触发卡腿判断的最大腿杆摆角
-#define BRING_LEG_THETA_MIN  0.15f   //退出卡腿判断的最小腿杆摆角
+#define BRING_LEG_THETA_MIN  0.22f   //退出卡腿判断的最小腿杆摆角
 
 #define BRING_COMP_FN_MAX    28.0f    //卡腿后收腿补偿力最大值
 #define BRING_COMP_TL_COEF 	 0.008f  //卡腿后收腿补偿腿长系数

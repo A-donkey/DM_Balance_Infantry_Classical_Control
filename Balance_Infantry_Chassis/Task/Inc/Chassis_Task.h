@@ -12,6 +12,7 @@
 #include "Self_Rescue.h"
 #include "wheel_kalman.h"
 #include "Power_Limit.h"
+#include "Buzzer_Run.h"
 
 //角度转弧度
 #define Ang_PI 0.01745329f
@@ -29,13 +30,17 @@ typedef struct
 	bool bump_flag;     //进入磕台阶模式
 	bool change_flag;   //调转车头标志位
 	bool spinning_flag; //小陀螺标志位
+	bool super_flag;		//超级加速标志位(飞坡)
+	bool jump_flag;			//处于跳跃状态机标志位
 	
 	//自动判断(根据状态机判断)
-	bool off_flag;      //离地标志位
-	bool fall_flag;     //倒地标志位
-	bool slip_flag[2];  //打滑标志位
-	bool theta_flag[3]; //theta角度异常标志位[0左腿杆 1右腿杆 2车身(倒台阶了)]
-	bool super_flag;		//超级加速标志位(飞坡)
+	bool off_flag;       //离地标志位
+	bool fall_flag;      //倒地标志位
+	bool slip_flag[2];   //打滑标志位
+	bool theta_flag[3];  //theta角度异常标志位[0左腿杆 1右腿杆 2车身(倒台阶了)]
+	bool jump_ready_flag;//完成压腿准备起跳标志位
+	bool jump_stay_flag; //跳跃过程中腾空标志位
+	bool jump_zip_flag;  //腾空收腿后摆标志位
 }Flag_Bit_t;
 
 typedef struct
@@ -131,6 +136,7 @@ void Chassis_Can_Data_Send(Chassis_Motor_t *cm,Controlled_State_t *cs,Joint_Moto
 void All_Theta_Err_Check(INS_t *ins,Flag_Bit_t *flag,Leg_Current_Situation_t *leg[2],Joint_Motor_Status_t *joint_m[2]);
 void Slip_Check_Calc(Flag_Bit_t *flag,Slip_Check_t *slip,Body_Current_Situation_t *body,Leg_Current_Situation_t *leg[2],Goal_Setting_t *goal);
 void Bump_Control(Flag_Bit_t *flag,Goal_Setting_t *goal,Leg_Current_Situation_t *leg[2],Joint_Motor_Status_t *joint_m[2]);
+void Jump_Control(Flag_Bit_t *flag,Goal_Setting_t *goal,Body_Current_Situation_t *body,Leg_Current_Situation_t *leg[2],Joint_Motor_Status_t *joint_m[2],Vmc_Five_Link_Parameter_t *five_link[2]);
 void YAW_Parameter_Processing(Flag_Bit_t *flag,Goal_Setting_t *goal,Controlled_State_t *cs,Body_Current_Situation_t *body);
 void Check_Stuck_Leg(Flag_Bit_t *flag,Bring_Legs_t *bring,Controlled_State_t *cs,Leg_Current_Situation_t *leg[2],Joint_Motor_Status_t *joint_m[2]);
 void Fast_Processing(Flag_Bit_t *flag,Goal_Setting_t *goal,Controlled_State_t *cs,Body_Current_Situation_t *body,Speed_Fusion_Parameter_t *sp_fusion);

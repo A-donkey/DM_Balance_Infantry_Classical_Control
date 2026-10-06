@@ -32,7 +32,8 @@
 #define CHASSIS_TO_GIMBAL_CAN_ID_1        0x105
 #define GIMBAL_TO_CHASSIS_CAN_ID_1        0x100
 #define GIMBAL_TO_CHASSIS_CAN_ID_2        0x120
-#define DT7_TO_CHASSIS_CAN_ID             0x80
+#define DT7_TO_CHASSIS_CAN_ID_1           0x80
+#define DT7_TO_CHASSIS_CAN_ID_2           0x140
 #define YAW_MOTOR_CTRL_ID                 0x0A
 #define YAW_MOTOR_FEEDBACK_ID             0x0B
 #define TOGGLE_MOTOR_FEEDBACK_ID         	0x206

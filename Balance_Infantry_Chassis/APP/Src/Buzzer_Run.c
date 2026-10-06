@@ -12,7 +12,7 @@ void Ready_Buzzer(void)
 	
 	if(Ready_Buzzer_Flag == 0)
 	{
-		Buzzer_On(1,5000);
+		Buzzer_On(6,5000);
 		
 		Ready_Buzzer_Time++;
 		
@@ -66,7 +66,7 @@ void Error_Buzzer(Link_Sit_t *link)
 				case 0:
 				{
 					buzzer_time++;
-					Buzzer_On(1,5000);
+					Buzzer_On(6,5000);
 					break;
 				}
 				case 40:
@@ -94,7 +94,7 @@ void Error_Buzzer(Link_Sit_t *link)
 				case 0:
 				{
 					buzzer_time++;
-					Buzzer_On(1,5000);
+					Buzzer_On(6,5000);
 					break;
 				}
 				case 20:

@@ -88,7 +88,6 @@
 "balance_infantry\some_functions.o"
 "balance_infantry\gimbalsystemid.o"
 "balance_infantry\gimbalsystemidconfig.o"
-"balance_infantry\system_identification.o"
 "balance_infantry\crcs.o"
 "balance_infantry\fifo.o"
 "balance_infantry\referee.o"

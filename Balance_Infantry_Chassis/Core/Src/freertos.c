@@ -277,7 +277,7 @@ void Start_Ref_Task(void const * argument)
   {
 		Ref_Task();
 		
-    osDelay(1);
+    osDelay(5);
   }
   /* USER CODE END Start_Ref_Task */
 }
