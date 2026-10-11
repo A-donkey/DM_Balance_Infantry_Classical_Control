@@ -1,1 +1,39 @@
 AI_Temp/
+
+# Keil build output directories
+**/MDK-ARM/Balance_Infantry/
+**/MDK-ARM/Objects/
+**/MDK-ARM/Listings/
+
+# Keil compiler outputs outside the output directories
+**/MDK-ARM/*.o
+**/MDK-ARM/*.obj
+**/MDK-ARM/*.d
+**/MDK-ARM/*.crf
+**/MDK-ARM/*.axf
+**/MDK-ARM/*.elf
+**/MDK-ARM/*.hex
+**/MDK-ARM/*.bin
+**/MDK-ARM/*.map
+**/MDK-ARM/*.lst
+**/MDK-ARM/*.lnp
+**/MDK-ARM/*.iex
+**/MDK-ARM/*.dep
+**/MDK-ARM/*.build_log.htm
+**/MDK-ARM/build_log.txt
+
+# Machine-specific Keil/J-Link settings and backups
+**/MDK-ARM/*.uvopt
+**/MDK-ARM/*.uvoptx
+**/MDK-ARM/*.uvguix.*
+**/MDK-ARM/*.bak
+**/MDK-ARM/JLinkLog.txt
+**/MDK-ARM/JLinkSettings.ini
+**/MDK-ARM/DebugConfig/
+
+# Keep shared project inputs tracked: .uvprojx, startup .s,
+# RTE component configuration, and .scvd files.
+Balance_Infantry_Chassis/MDK-ARM/Balance_Infantry.uvoptx
+Balance_Infantry_Chassis/MDK-ARM/startup_stm32h723xx.lst
+Balance_Infantry_Chassis/MDK-ARM/Balance_Infantry/Balance_Infantry.hex
+Balance_Infantry_Chassis/MDK-ARM/Balance_Infantry/Balance_Infantry.lnp
