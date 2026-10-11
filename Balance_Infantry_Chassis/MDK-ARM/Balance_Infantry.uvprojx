@@ -1404,6 +1404,21 @@
               <FileType>5</FileType>
               <FilePath>..\Controller\Inc\PID.h</FilePath>
             </File>
+            <File>
+              <FileName>LESO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Controller\Src\LESO.c</FilePath>
+            </File>
+            <File>
+              <FileName>LESO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Controller\Inc\LESO.h</FilePath>
+            </File>
+            <File>
+              <FileName>leso_parameters.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Controller\Inc\leso_parameters.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

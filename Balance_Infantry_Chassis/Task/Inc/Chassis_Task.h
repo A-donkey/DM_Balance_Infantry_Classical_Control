@@ -13,6 +13,7 @@
 #include "wheel_kalman.h"
 #include "Power_Limit.h"
 #include "Buzzer_Run.h"
+#include "LESO.h"
 
 //½Ç¶È×ª»¡¶È
 #define Ang_PI 0.01745329f

@@ -57,6 +57,9 @@ void Chassis_Init(void)
 	Feedforward_Init(&G_Comp[0],160.0f,ffc_g_L ,0.05f,1.0f,1.0f);
 	Feedforward_Init(&G_Comp[1],160.0f,ffc_g_R ,0.05f,1.0f,1.0f);
 	
+	//LESO初始化
+	LESO_Init(&Chassis_LESO);
+	
 	//当前线程初始化完成
 	chassis_ready_flag = 1;
 	
@@ -1126,7 +1129,9 @@ void Bump_Control(Flag_Bit_t *flag,
 		bump_step[1] = 0;
 	}
 }
-
+/*******************************************************************************************************
+跳跃控制
+********************************************************************************************************/
 void Jump_Control(Flag_Bit_t *flag,
 									Goal_Setting_t *goal,
 									Body_Current_Situation_t *body,
@@ -1318,7 +1323,7 @@ void Leg_Control(INS_t *ins,
 		}
 	}
 }
-
+float leso_gain = 0.5f; 
 /*******************************************************************************************************
 LQR计算K增益
 ********************************************************************************************************/
@@ -1331,6 +1336,9 @@ void LQR(Flag_Bit_t *flag,
          Joint_Motor_Status_t *joint_m[2],
 				 Vmc_Five_Link_Parameter_t *five_link[2])
 {
+	//上一周期实际下发的电机力矩记录 (用于 LESO 观测器的输入通道更新)
+	static float Last_Applied_Torque[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	
 	//计算平衡点偏置
 	Offset_Calc(flag,comp,Offset_Fit_Coefficients,goal->Target_L0);
 	
@@ -1343,7 +1351,57 @@ void LQR(Flag_Bit_t *flag,
 		 !flag->theta_flag[2]    )
 	{
 		LQR_Calc(flag,goal,comp,body,leg,joint_m);
-	}
+		
+    float y[10];
+    y[0] = body->x;           y[1] = body->d_x;         
+    y[2] = body->abs_yaw;     y[3] = body->d_yaw;       
+    y[4] = leg[0]->theta;     y[5] = leg[0]->d_theta;   
+    y[6] = leg[1]->theta;     y[7] = leg[1]->d_theta;   
+    y[8] = body->theta;       y[9] = body->d_theta;     
+
+    //特殊工况保护
+    if (flag->off_flag || flag->jump_stay_flag || flag->jump_ready_flag)
+    {
+        LESO_Set_Enable(&Chassis_LESO, false);
+        LESO_Reset(&Chassis_LESO);
+    }
+    else
+    {
+        LESO_Set_Enable(&Chassis_LESO, true);
+
+        //迭代更新 LESO
+        LESO_Update(&Chassis_LESO, y, Last_Applied_Torque);
+
+        //提取 LQR控制力矩
+        float u_lqr[4];
+        u_lqr[0] = joint_m[1]->Tp;       // T_r_to_b
+        u_lqr[1] = joint_m[0]->Tp;       // T_l_to_b
+        u_lqr[2] = joint_m[1]->T_Wheel;  // T_wr_to_r
+        u_lqr[3] = joint_m[0]->T_Wheel;  // T_wl_to_l
+
+        //执行前馈减扰补偿
+				
+        joint_m[1]->Tp      = u_lqr[0] - leso_gain * Chassis_LESO.d_hat_lpf[0];
+        joint_m[0]->Tp      = u_lqr[1] - leso_gain * Chassis_LESO.d_hat_lpf[1];
+        joint_m[1]->T_Wheel = u_lqr[2] - leso_gain * Chassis_LESO.d_hat_lpf[2];
+        joint_m[0]->T_Wheel = u_lqr[3] - leso_gain * Chassis_LESO.d_hat_lpf[3];
+				
+        Last_Applied_Torque[0] = joint_m[1]->Tp;
+        Last_Applied_Torque[1] = joint_m[0]->Tp;
+        Last_Applied_Torque[2] = joint_m[1]->T_Wheel;
+        Last_Applied_Torque[3] = joint_m[0]->T_Wheel;
+				
+    }
+   }
+   else
+   {
+      //非受控状态复位观测器
+      LESO_Reset(&Chassis_LESO);
+      Last_Applied_Torque[0] = 0.0f;
+      Last_Applied_Torque[1] = 0.0f;
+      Last_Applied_Torque[2] = 0.0f;
+      Last_Applied_Torque[3] = 0.0f;
+   }
 }
 
 static float Limit_percent = 1;

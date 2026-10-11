@@ -63,6 +63,7 @@
 "balance_infantry\bmi088middleware.o"
 "balance_infantry\lqr.o"
 "balance_infantry\pid.o"
+"balance_infantry\leso.o"
 "balance_infantry\board_can_task.o"
 "balance_infantry\chassis_task.o"
 "balance_infantry\check_task.o"
