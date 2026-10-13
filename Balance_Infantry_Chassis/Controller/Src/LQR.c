@@ -55,8 +55,9 @@ lqr_R = diag([1.5, 1.5, 18, 18]);
     {     35.0413f,     -59.5095f,     -41.9793f,      23.2207f,      39.6379f,      38.5435f},  // K[3][8]
     {     3.70312f,     -4.15454f,     -6.81921f,    -0.703629f,      6.44891f,      5.99628f}   // K[3][9]
 };
-float Offset_Fit_Coefficients[4] = {
-					-17.178f,				11.939f,			-2.9224f,				0.3429f// theta_eq
+float Offset_Fit_Coefficients[5] = {
+					-0.00454129f,			+0.0102744f,		+0.00631711f,			-0.0396354f,			+0.184894f//新参数，4次拟合
+	
 };
 
 //定义控制矩阵
@@ -65,11 +66,18 @@ float u[10];
 //定义拟合增益矩阵
 float Fitting_K[4][10];
 
-void Offset_Calc(Flag_Bit_t *flag,Compensation_Amount_t *comp,float (*Fit_Coefficients),float TL){
-// float theta_offset = Fit_Coefficients[0]*TL*TL*TL + Fit_Coefficients[1]*TL*TL +	 Fit_Coefficients[2]*TL	+	Fit_Coefficients[3];
- float theta_offset = -0.5492*TL	+	0.2731;
- comp->Gravity_Comp_Theta_l = 	theta_offset;
- comp->Gravity_Comp_Theta_r = 	theta_offset;
+void Offset_Calc(Flag_Bit_t *flag,Compensation_Amount_t *comp,float (*Fit_Coefficients),float TL, float GP, float bullet_num){
+	//腿长补偿
+	TL=(TL-0.25f)/0.05f;//增大系数倍率
+	float theta_offset = Fit_Coefficients[0]*TL*TL*TL*TL + Fit_Coefficients[1]*TL*TL*TL +	 Fit_Coefficients[2]*TL*TL	+	Fit_Coefficients[3]*TL	+  Fit_Coefficients[4];
+	//云台pitch补偿
+	float gimbal_pitch_offset = - 0.000000465f*GP*GP + 0.0002835f*GP + 0.00626f;
+	//弹丸数量补偿
+	float bullet_num_offset = -3.16727e-8f * bullet_num * bullet_num + 3.97941e-5f * bullet_num - 2.45128e-5f; 
+	
+	//补偿角限幅
+	comp->Gravity_Comp_Theta_l = 	Max_Output( theta_offset + gimbal_pitch_offset + bullet_num_offset, 0.225 );
+	comp->Gravity_Comp_Theta_r = 	Max_Output( theta_offset + gimbal_pitch_offset + bullet_num_offset, 0.225 );
 	
  if(flag->jump_zip_flag){
 	comp->Gravity_Comp_Theta_l = 	JUMP_OFFSET_THETA;

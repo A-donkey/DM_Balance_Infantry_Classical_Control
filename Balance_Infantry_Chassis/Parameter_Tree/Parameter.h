@@ -85,7 +85,7 @@
 #define BST_THRESHOLD        2       //卡腿判断时间阈值
 #define BRING_TWHEEL_MAX     5.2f    //触发卡腿判断的最大轮力矩值
 #define BRING_LEG_THETA_MAX  0.5f    //触发卡腿判断的最大腿杆摆角
-#define BRING_LEG_THETA_MIN  0.22f   //退出卡腿判断的最小腿杆摆角
+#define BRING_LEG_THETA_MIN  0.23f   //退出卡腿判断的最小腿杆摆角
 
 #define BRING_COMP_FN_MAX    28.0f    //卡腿后收腿补偿力最大值
 #define BRING_COMP_TL_COEF 	 0.008f  //卡腿后收腿补偿腿长系数

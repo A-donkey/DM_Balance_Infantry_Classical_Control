@@ -1340,7 +1340,7 @@ void LQR(Flag_Bit_t *flag,
 	static float Last_Applied_Torque[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 	
 	//计算平衡点偏置
-	Offset_Calc(flag,comp,Offset_Fit_Coefficients,goal->Target_L0);
+	Offset_Calc(flag,comp,Offset_Fit_Coefficients,goal->Target_L0,Up_Cboard_Info.up_pitch,Up_Cboard_Info.Number_Of_Bullets);
 	
 	//计算拟合K增益
 	Fitting_K_Calc(Fitting_K,P,five_link[0]->L0,five_link[1]->L0);	
